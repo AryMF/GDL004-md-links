@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const fetch = require("node-fetch");
 
-module.exports = async function mdLinks ( filePath, options = { validate: false } ) {
+//module.exports =
+async function mdLinks ( filePath, options = { validate: false } ) {
 	//Validar si se recibio un directorio o un archivo
 	let fileArray = [];
 	var pathValidation = fs.statSync(filePath);
@@ -84,31 +85,12 @@ module.exports = async function mdLinks ( filePath, options = { validate: false 
 		})
 	);
 
-	let reFormatArray = [];
-	resultsArray.forEach(element => {
-		element.map(item => {
-			reFormatArray.push(item);
-		});
-	});
-
 	let promise = new Promise( (resolve, reject) => {
 		if(errorMsg === '') {
-			// resolve(resultsArray);
-			resolve(reFormatArray);
+			resolve(resultsArray);
 		} else {
 			reject(errorMsg);
 		}
     });
     return promise;
 }
-
-/*
-mdLinks ( '.\\other', {validate : true} ).then(result => {
-	console.log(result);
-}).catch(error => {
-	console.log(`***${error}***`);
-});
-*/
-//TODO: Preguntar:
-//Formato de respuesta [[{},..{}][{},..{}]] || [{},..{}]
-//Timeout de llamada
