@@ -26,5 +26,8 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
     "jest": "^25.1.0"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0"
   }
 }
