@@ -2,8 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const fetch = require("node-fetch");
 
-//module.exports =
-async function mdLinks ( filePath, options = { validate: false } ) {
+module.exports = async function mdLinks ( filePath, options = { validate: false } ) {
 	//Validar si se recibio un directorio o un archivo
 	let fileArray = [];
 	var pathValidation = fs.statSync(filePath);
@@ -94,3 +93,9 @@ async function mdLinks ( filePath, options = { validate: false } ) {
     });
     return promise;
 }
+
+/*mdLinks ( 'other', {validate : true} ).then(result => {
+	console.log(result.length);
+}).catch(error => {
+	console.log(`***${error}***`);
+});*/
