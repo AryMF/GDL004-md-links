@@ -1,6 +1,6 @@
 {
   "name": "@arymf/md-links",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Clean library that reads markdown text files and validates the state of the contained links [alive/dead].",
   "main": "index.js",
   "bin": {
