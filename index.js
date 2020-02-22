@@ -2,8 +2,7 @@ const validateFile = require('.\\src\\validateFile.js');
 const parseURL = require('.\\src\\parseURL.js');
 const urlStatusCheck = require('.\\src\\urlStatusCheck.js');
 
-//module.exports =
-const mdLinks = ( filePath, options = { validate: false } ) => {
+module.exports = mdLinks = ( filePath, options = { validate: false } ) => {
 	const promise = new Promise( async (resolve, reject) => {
 		try {
 			//Validar si se recibio un directorio o un archivo

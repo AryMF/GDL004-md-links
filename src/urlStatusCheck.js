@@ -3,24 +3,22 @@ const fetch = require("node-fetch");
 module.exports = urlStatusCheck = async (results) => {
 	//Llamadas a los links
 	let linksStatus = await Promise.all(
-		results.map(async (url) => {
+		results.map(async (element, index) => {
+			let urlResponse = {};
 			try {
-				let urlResponse = await fetch(url.href);
-				return [ urlResponse.status, urlResponse.ok ];
+				urlResponse = await fetch(element.href);
 			}
 			catch(error) {
-				let text = error.name + ': ' + error.message;
-				return [ text, false];
+				urlResponse = {
+					status: error.name + ': ' + error.message,
+					ok: false
+				}
 			}
-
+			let status = urlResponse.ok === true ? 'Ok' : 'Fail';
+			element['status'] = status;
+			element['responseCode'] = urlResponse.status;
+			return element;
 		})
 	);
-
-	results.map((element, index) => {
-		let status = linksStatus[index][1] === true ? 'Ok' : 'Fail';
-		element['status'] = status;
-		element['responseCode'] = linksStatus[index][0];
-	});
-
-	return results;
+	return linksStatus;
 };

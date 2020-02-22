@@ -17,7 +17,7 @@ module.exports = validateFile = (filePath) => {
 			//Si es archivo push directo al array de archivos a trabajar
 			filesArray.push(filePath);
 		} else {
-			throw 'File or directory invalid.';
+			throw new Error ('File or directory invalid.');
 		}
 		if(filesArray.length === 0){
 			throw 'Empty directory.';

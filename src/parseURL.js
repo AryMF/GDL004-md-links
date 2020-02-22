@@ -5,7 +5,6 @@ module.exports = parseURL = (filesArray) => {
 	let controlCounter = 0;
 	const regexMdLinks = /\[(.*)\](\(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)\))/gm;
 	const singleMatch = /\[(.*)\]\((https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))\)/;
-	//let matches = [];
 	//Iterar entre los elemetos del filesArray y sacar todos los matches
 	for(let elementFile of filesArray){
 		// ***** Leer el archivo *****
@@ -32,7 +31,7 @@ module.exports = parseURL = (filesArray) => {
 	}
 
 	if(controlCounter === filesArray.length) {
-		throw 'No links to verify in the file';
+		throw 'No links to verify in the file.';
 	} else {
 		return results;
 	}
