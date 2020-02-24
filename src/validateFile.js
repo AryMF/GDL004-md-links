@@ -3,6 +3,7 @@ const path = require('path');
 
 module.exports = validateFile = (filePath) => {
 	//Validar si se recibio un directorio o un archivo
+	//TODO: Si existe otro directorio leerlo.
 		let filesArray = [];
 		const pathValidation = fs.statSync(filePath);
 		if(pathValidation.isDirectory()) {

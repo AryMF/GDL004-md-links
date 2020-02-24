@@ -1,8 +1,7 @@
-#!/usr/bin/env node
-
 const validateFile = require('.\\src\\validateFile.js');
 const parseURL = require('.\\src\\parseURL.js');
 const urlStatusCheck = require('.\\src\\urlStatusCheck.js');
+const calculateStats = require('.\\src\\calculateStats.js');
 const chalk = require('chalk');
 const ora = require('ora');
 
@@ -25,9 +24,12 @@ module.exports = mdLinks = async (args) => {
 		if(options.includes('-v') || options.includes('--validate')) {
 			results = await urlStatusCheck(results);
 		}
+
+		//console.log(results);
 		spinner.stop();
 
-		results.forEach(item => {
+		//Imprimir resultados
+		results.data.forEach(item => {
 				let egg = '';
 				item.responseCode === 418 ? egg = ' ᴺᵒ ᶜᵒᶠᶠᵉᵉ ⁴ ᵁ' : egg;
 				let template = `${chalk.yellow('Path')}: ${item.file}  ${chalk.blue('Text')}: ${chalk.bold(item.text)}  ${chalk.magenta('Url')}: ${item.href}`;
@@ -41,13 +43,13 @@ module.exports = mdLinks = async (args) => {
 				console.log(template);
 		});
 
-		if(options.includes('-s') || options.includes('--stats')){
-			//Numero de links
-			let totalLinks = results.length;
-			let template = `TotalLinks: ${chalk.magenta.bold(totalLinks)}\n`;
+		//options === -s, --stats
+		if(options.includes('-s') || options.includes('--stats')) {
+			results = calculateStats(results);
+			let template = `TotalLinks: ${chalk.magenta.bold(results.stats.Total)}\n`;
 			//Broken
 			options.includes('-v') || options.includes('--validate')
-			? template += `Broken: ${chalk.red.bold(failStatusCounter)}\n`
+			? template += `Broken: ${chalk.red.bold(results.stats.Broken)}\n`
 			: template;
 
 			console.log(template);

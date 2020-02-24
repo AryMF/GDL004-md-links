@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 module.exports = parseURL = (filesArray) => {
-	let results = [];
+	let results = {'data': []};
 	let controlCounter = 0;
 	const regexMdLinks = /\[(.*)\](\(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)\))/gm;
 	const singleMatch = /\[(.*)\]\((https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))\)/;
@@ -11,8 +11,7 @@ module.exports = parseURL = (filesArray) => {
 		const contents = fs.readFileSync(elementFile, 'utf8');
 		//Conseguir array de links
 		let matches = contents.match(regexMdLinks);
-		//matches = matches.concat(matchesAux);
-		//Validar que existan links para trabajar, sino mensaje de error.
+		//Validar que existan links para trabajar.
 		if(!matches) {
 			controlCounter++;
 		} else {
@@ -26,7 +25,8 @@ module.exports = parseURL = (filesArray) => {
 				};
 				return info;
 			});
-			results = results.concat(fileInfo);
+			// results = results.concat(fileInfo);
+			results['data'] = fileInfo;
 		}
 	}
 

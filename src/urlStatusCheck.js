@@ -2,8 +2,9 @@ const fetch = require("node-fetch");
 
 module.exports = urlStatusCheck = async (results) => {
 	//Llamadas a los links
-	let linksStatus = await Promise.all(
-		results.map(async (element, index) => {
+	let linksStatus = {'data': []};
+	linksStatus['data'] = await Promise.all(
+		results.data.map(async (element, index) => {
 			let urlResponse = {};
 			try {
 				urlResponse = await fetch(element.href);
