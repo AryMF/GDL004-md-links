@@ -6,9 +6,8 @@ module.exports = fileExtractor = (directory, recursive = false) => {
 	let dirContent = fs.readdirSync(directory, {withFileTypes: false});
 	for(let element of dirContent){
 		let fullPath = directory + '/' + element;
-		//console.log(fullPath);
 		if(fs.statSync(fullPath).isDirectory() && recursive){
-			result = result.concat(fileExtractor(fullPath));
+			result = result.concat(fileExtractor(fullPath, recursive));
 		} else {
 			if(path.extname(fullPath) == '.md') {
 				result.push(fullPath);
@@ -17,4 +16,4 @@ module.exports = fileExtractor = (directory, recursive = false) => {
 		}
 	}
 	return result;
-}
+};

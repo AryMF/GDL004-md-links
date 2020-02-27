@@ -40,7 +40,8 @@ const argv = yargs
   .example('md-Links --path= <file/directory> --validate --stats')
   .argv;
 
-export async function mdLinks(args){
+//export async function mdLinks(args){
+module.exports = mdLinks = async (args) => {
 	try {
 		const spinner = new Spinner('Processing.. %s	');
 		spinner.setSpinnerString('|/-\\');
