@@ -1,141 +1,107 @@
-#!/usr/bin/env node
-
-const fs = require('fs');
-const path = require('path');
-const fetch = require("node-fetch");
+const validateFile = require('./src\\validateFile.js');
+const parseURL = require('.\\src\\parseURL.js');
+const urlStatusCheck = require('.\\src\\urlStatusCheck.js');
+const calculateStats = require('.\\src\\calculateStats.js');
+var yargs = require('yargs');
 const chalk = require('chalk');
-const ora = require('ora');
+var Spinner = require('cli-spinner').Spinner;
+const boxen = require('boxen');
 
-export async function mdLinks (args) {
-	let errorMsg = '';
-	let failStatusCounter = 0;
-	let filePath = args[2];
-	let options = args.slice(3, args.length);
+const argv = yargs
+  .usage('\nClean library that reads markdown text files and validates the state of the contained links [alive/dead].\n\nUsage: md-Links [options]')
+  .help('help').alias('help', 'h')
+  .version().alias('version', 'V')
+  .options({
+	path:	{
+		alias: 'p',
+		description: "<filename> Input file name.",
+		requiresArg: true,
+		required: true
+	},
+	validate:	{
+		alias: 'v',
+		description: 'Verify the status of each link on the file.',
+		requiresArg: false,
+		required: false
+	},
+    stats:	{
+		alias: 's',
+		description: 'Prints the number of links found and the number of unique links.',
+		requiresArg: false,
+		required: false
+	},
+	recursive:	{
+		alias: 'r',
+		description: 'Search in all the sub directories of the given path',
+		requiresArg: false,
+		required: false
+	},
+  })
+  .example('md-Links --path= <file/directory> --validate --stats')
+  .argv;
 
-	//options === -h, --help
-	//Imprimir ayuda
-
-	//Validar si se recibio un directorio o un archivo
-	let fileArray = [];
+module.exports = mdLinks = async (args) =>{
 	try {
-		const pathValidation = fs.statSync(filePath);
-		if(pathValidation.isDirectory()) {
-			//Si es directorio push al array de archivos a trabajar de todos los archivos con extension .md
-			let file = fs.readdirSync(filePath);
-			for(let element of file){
-				if(path.extname(element) == '.md') {
-					fileArray.push(`${filePath}\\${element}`);
-				}
-			}
-		} else {
-			//Si es archivo push directo al array de archivos a trabajar
-			fileArray.push(filePath);
+		const spinner = new Spinner('Processing.. %s	');
+		spinner.setSpinnerString('|/-\\');
+		//spinner.start();
+
+		//Validar si se recibio un directorio o un archivo
+		let filesArray = validateFile(args.path, args.recursive);
+		//const spinner = ora().start();
+		spinner.start();
+		//Conseguir array de links -> options === vacio
+		spinner.setSpinnerTitle('Reading file.. %s	');
+		let results = parseURL(filesArray);
+
+		//options === -v, --validate
+		if(args.validate) {
+			spinner.setSpinnerTitle('Validating url.. %s	');
+			results = await urlStatusCheck(results);
 		}
-	} catch (error) {
-		errorMsg = error.name + ': ' + error.message;
-	}
-	fileArray.length === 0 && errorMsg === '' ? errorMsg = 'No files to verify in the path' : errorMsg;
 
-	// **** Ciclo en el array a trabajar ****
-	let resultsArray = await Promise.all(
-		fileArray.map(async elementFile => {
-			const spinner = ora().start();
-			try {
-				let results = [];
-				// ***** Leer el archivo *****
-				const contents = fs.readFileSync(elementFile, 'utf8');
-				//Conseguir array de links
-				const regexMdLinks = /\[(.*)\](\(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)\))/gm;
-				const singleMatch = /\[(.*)\]\((https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))\)/;
-				let matches = contents.match(regexMdLinks);
+		//console.log(results);
+		spinner.stop(true);
+		console.log('\n');
 
-				//Validar que existan links para trabajar, sino mensaje de error.
-				if(!matches) { //Is null
-					errorMsg = 'No links to verify in the file';
-				} else {
-					//options === vacio
-					//debe identificar el archivo markdown (a partir de la ruta que recibe como argumento),
-					//analizar el archivo Markdown e imprimir los links que vaya encontrando,
-					//junto con la ruta del archivo donde aparece y el texto que hay dentro del link (truncado a 50 caracteres).
-					results = matches.map(element => {
-						let linkInfo = singleMatch.exec(element);
-						let info = {
-							href: linkInfo[2],
-							text: linkInfo[1].substring(0, 50),
-							file: elementFile
-						};
-						return info;
-					});
-
-					//options === -v, --validate
-					if(options.includes('-v') || options.includes('--validate')) {
-						//Llamadas a los links
-						let linksStatus = await Promise.all(
-							results.map(async url => {
-								try {
-									let urlResponse = await fetch(url.href);
-									return [ urlResponse.status, urlResponse.ok ];
-								}
-								catch(error) {
-									let text = error.name + ': ' + error.message;
-									return [ text, false];
-								}
-
-							})
-						);
-
-						results.map((element, index) => {
-							let status = linksStatus[index][1] === true ? 'Ok' : 'Fail';
-							status === 'Fail' ? failStatusCounter += 1 : failStatusCounter;
-							element['status'] = status;
-							element['responseCode'] = linksStatus[index][0];
-						});
-					}
-
-				}
-				spinner.stop();
-				return results;
-			}
-			catch(error) {
-				errorMsg = error.name + ': ' + error.message;
-				spinner.stop();
-				return;
-			}
-		})
-	);
-
-	if(errorMsg === ''){
-		resultsArray.forEach(element => {
-			element.map(item => {
+		//Imprimir resultados
+		results.data.forEach(item => {
 				let egg = '';
 				item.responseCode === 418 ? egg = ' ᴺᵒ ᶜᵒᶠᶠᵉᵉ ⁴ ᵁ' : egg;
 				let template = `${chalk.yellow('Path')}: ${item.file}  ${chalk.blue('Text')}: ${chalk.bold(item.text)}  ${chalk.magenta('Url')}: ${item.href}`;
-				item.status === 'Ok' ? template += `  ${chalk.yellow('Status')}: ${chalk.green.bold(item.status)}` : template;
-				item.status === 'Fail' ? template += `  ${chalk.yellow('Status')}: ${chalk.red.bold(item.status)}` : template;
-				item.responseCode ? template += `  ResponseCode: ${chalk.cyanBright.bold(item.responseCode)}${chalk.greenBright(egg)}\n` : template += `\n`;
+				if(item.status){
+					item.status === 'Ok' ? template += `  ${chalk.yellow('Status')}: ${chalk.green.bold(item.status)}`
+					: template += `  ${chalk.yellow('Status')}: ${chalk.red.bold(item.status)}`;
+
+					template += `  ResponseCode: ${chalk.cyanBright.bold(item.responseCode)}${chalk.greenBright(egg)}\n`
+				} else {
+					template += `\n`;
+				}
 				console.log(template);
-			});
 		});
 
-		if(options.includes('-s') || options.includes('--stats')){
-			//Numero de links
-			let totalLinks = 0;
-			for(const element of resultsArray) {
-				totalLinks += element.length;
-			}
-			let template = `TotalLinks: ${chalk.magenta.bold(totalLinks)}\n`;
-			//Broken
-			options.includes('-v') || options.includes('--validate')
-			? template += `Broken: ${chalk.red.bold(failStatusCounter)}\n`
-			: template;
-
-			console.log(template);
+		//options === -s, --stats
+		if(args.stats) {
+			results = calculateStats(results, filesArray.length);
+			let statsKeys = Object.keys(results.stats);
+			let template = ``;
+			statsKeys.forEach(element => {
+				template += `${element}: ${chalk.magenta.bold(results.stats[element])}\n`;
+			});
+			console.log('\n\n' + boxen(chalk.cyan(template), {
+				padding: 1,
+				margin: {
+					top: 1,
+					left: 30,
+					bottom: 1
+				},
+				borderColor: '#eebbaa',
+				borderStyle: 'double'
+			}) + '\n');
 		}
-
-	} else {
-		console.log(errorMsg);
+	} catch (error) {
+		console.log( `${error}`);
 	}
 }
 
-//md-links other/test.md --validate --stats
-//md-links other/test.md -v -s
+mdLinks(argv);

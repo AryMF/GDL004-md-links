@@ -32,9 +32,11 @@
     "jest": "^25.1.0"
   },
   "dependencies": {
+    "boxen": "^4.2.0",
     "chalk": "^3.0.0",
+    "cli-spinner": "^0.2.10",
     "esm": "^3.2.25",
     "node-fetch": "^2.6.0",
-    "ora": "^4.0.3"
+    "yargs": "^15.1.0"
   }
 }
