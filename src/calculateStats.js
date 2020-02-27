@@ -39,4 +39,4 @@ module.exports = calculateStats = (results) => {
 	}
 
 	return results;
-}
+};

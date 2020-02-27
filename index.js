@@ -1,7 +1,7 @@
-const validateFile = require('.\\src\\validateFile.js');
-const parseURL = require('.\\src\\parseURL.js');
-const urlStatusCheck = require('.\\src\\urlStatusCheck.js');
-const calculateStats = require('.\\src\\calculateStats.js');
+const validateFile = require('./src/validateFile.js');
+const parseURL = require('./src/parseURL.js');
+const urlStatusCheck = require('./src/urlStatusCheck.js');
+const calculateStats = require('./src/calculateStats.js');
 
 module.exports = mdLinks = ( filePath, options = { validate: false, stats: false } ) => {
 	const promise = new Promise( async (resolve, reject) => {
@@ -24,13 +24,4 @@ module.exports = mdLinks = ( filePath, options = { validate: false, stats: false
 		}
 	});
 	return promise;
-}
-
-let test3 = 'other/test.md'; // Archivo valido
-let test4 = 'other/'; //Directorio con multiples archivos validos
-
-mdLinks(test4, {validate: true, stats: true}).then(respuesta =>{
-	console.log(respuesta);
-}).catch(error => {
-	console.log(error);
-});
+};

@@ -7,7 +7,6 @@ module.exports = parseURL = (filesArray) => {
 	const singleMatch = /\[(.*)\]\((https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))\)/;
 	//Iterar entre los elemetos del filesArray y sacar todos los matches
 	for(let elementFile of filesArray){
-		console.log(`elementFile ${elementFile}`);
 		// ***** Leer el archivo *****
 		const contents = fs.readFileSync(elementFile, 'utf8');
 		//Conseguir array de links
@@ -28,7 +27,6 @@ module.exports = parseURL = (filesArray) => {
 			});
 			// results = results.concat(fileInfo);
 			results.data = results.data.concat(fileInfo);
-			console.log(`results.data ${results.data.length}`);
 		}
 	}
 
