@@ -10,17 +10,14 @@ module.exports = mdLinks = ( filePath, options = { validate: false, stats: false
 			let filesArray = validateFile(filePath);
 			//Conseguir array de links -> options === vacio
 			let results = parseURL(filesArray);
-
 			//options === -v, --validate
 			if(options.validate === true) {
 				results = await urlStatusCheck(results);
 			}
-
 			//options === -s, --stats
 			if(options.stats === true) {
 				results = calculateStats(results);
 			}
-
 			resolve(results);
 		} catch (error) {
 			reject( `${error}`);
@@ -30,8 +27,10 @@ module.exports = mdLinks = ( filePath, options = { validate: false, stats: false
 }
 
 let test3 = 'other/test.md'; // Archivo valido
-mdLinks(test3, {validate: true, stats: true}).then(respuesta =>{
-	console.log('D: ', respuesta);
+let test4 = 'other/'; //Directorio con multiples archivos validos
+
+mdLinks(test4, {validate: true, stats: true}).then(respuesta =>{
+	console.log(respuesta);
 }).catch(error => {
-	console.log('C: ', error);
+	console.log(error);
 });

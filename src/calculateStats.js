@@ -25,7 +25,7 @@ module.exports = calculateStats = (results) => {
 	}
 	//Broken
 	let failStatusCounter = 0;
-	if (results.data){
+	if (results.data[0].status){
 		const reducer = (accumulator, currentValue) => {
 			if(currentValue.status === 'Fail') {
 				return accumulator + 1;
@@ -34,7 +34,9 @@ module.exports = calculateStats = (results) => {
 			}
 		}
 		failStatusCounter = results.data.reduce(reducer, 0);
+		//Concat Broken a results
+		results.stats['Broken'] = failStatusCounter;
 	}
-	results.stats['Broken'] = failStatusCounter;
+
 	return results;
 }
