@@ -5,6 +5,7 @@ const calculateStats = require('.\\src\\calculateStats.js');
 var yargs = require('yargs');
 const chalk = require('chalk');
 var Spinner = require('cli-spinner').Spinner;
+const boxen = require('boxen');
 
 const argv = yargs
   .usage('\nClean library that reads markdown text files and validates the state of the contained links [alive/dead].\n\nUsage: md-Links [options]')
@@ -29,19 +30,24 @@ const argv = yargs
 		requiresArg: false,
 		required: false
 	},
+	recursive:	{
+		alias: 'r',
+		description: 'Search in all the sub directories of the given path',
+		requiresArg: false,
+		required: false
+	},
   })
   .example('md-Links --path= <file/directory> --validate --stats')
   .argv;
 
-//module.exports =
-async function mdLinks (args) {
+module.exports = mdLinks = async (args) =>{
 	try {
 		const spinner = new Spinner('Processing.. %s	');
 		spinner.setSpinnerString('|/-\\');
 		//spinner.start();
 
 		//Validar si se recibio un directorio o un archivo
-		let filesArray = validateFile(args.path);
+		let filesArray = validateFile(args.path, args.recursive);
 		//const spinner = ora().start();
 		spinner.start();
 		//Conseguir array de links -> options === vacio
@@ -56,36 +62,46 @@ async function mdLinks (args) {
 
 		//console.log(results);
 		spinner.stop(true);
-		console.log('\n\n');
+		console.log('\n');
 
 		//Imprimir resultados
 		results.data.forEach(item => {
 				let egg = '';
 				item.responseCode === 418 ? egg = ' ᴺᵒ ᶜᵒᶠᶠᵉᵉ ⁴ ᵁ' : egg;
 				let template = `${chalk.yellow('Path')}: ${item.file}  ${chalk.blue('Text')}: ${chalk.bold(item.text)}  ${chalk.magenta('Url')}: ${item.href}`;
-				if(item.status === 'Ok') {
-					template += `  ${chalk.yellow('Status')}: ${chalk.green.bold(item.status)}`;
+				if(item.status){
+					item.status === 'Ok' ? template += `  ${chalk.yellow('Status')}: ${chalk.green.bold(item.status)}`
+					: template += `  ${chalk.yellow('Status')}: ${chalk.red.bold(item.status)}`;
+
+					template += `  ResponseCode: ${chalk.cyanBright.bold(item.responseCode)}${chalk.greenBright(egg)}\n`
 				} else {
-					template += `  ${chalk.yellow('Status')}: ${chalk.red.bold(item.status)}`;
+					template += `\n`;
 				}
-				item.responseCode ? template += `  ResponseCode: ${chalk.cyanBright.bold(item.responseCode)}${chalk.greenBright(egg)}\n` : template += `\n`;
 				console.log(template);
 		});
 
 		//options === -s, --stats
 		if(args.stats) {
-			results = calculateStats(results);
+			results = calculateStats(results, filesArray.length);
 			let statsKeys = Object.keys(results.stats);
 			let template = ``;
 			statsKeys.forEach(element => {
 				template += `${element}: ${chalk.magenta.bold(results.stats[element])}\n`;
 			});
-			console.log(template);
+			console.log('\n\n' + boxen(chalk.cyan(template), {
+				padding: 1,
+				margin: {
+					top: 1,
+					left: 30,
+					bottom: 1
+				},
+				borderColor: '#eebbaa',
+				borderStyle: 'double'
+			}) + '\n');
 		}
 	} catch (error) {
 		console.log( `${error}`);
 	}
 }
 
-//mdLinks(['nada', 'nada', 'other/test.md', '--validate', '--stats']);
 mdLinks(argv);

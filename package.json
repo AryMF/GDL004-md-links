@@ -32,6 +32,7 @@
     "jest": "^25.1.0"
   },
   "dependencies": {
+    "boxen": "^4.2.0",
     "chalk": "^3.0.0",
     "cli-spinner": "^0.2.10",
     "esm": "^3.2.25",

@@ -3,11 +3,11 @@ const parseURL = require('./src/parseURL.js');
 const urlStatusCheck = require('./src/urlStatusCheck.js');
 const calculateStats = require('./src/calculateStats.js');
 
-module.exports = mdLinks = ( filePath, options = { validate: false, stats: false } ) => {
+module.exports = mdLinks = ( filePath, options = { validate: false, stats: false, recursive: false } ) => {
 	const promise = new Promise( async (resolve, reject) => {
 		try {
 			//Validar si se recibio un directorio o un archivo
-			let filesArray = validateFile(filePath);
+			let filesArray = validateFile(filePath, options.recursive);
 			//Conseguir array de links -> options === vacio
 			let results = parseURL(filesArray);
 			//options === -v, --validate
@@ -16,7 +16,7 @@ module.exports = mdLinks = ( filePath, options = { validate: false, stats: false
 			}
 			//options === -s, --stats
 			if(options.stats === true) {
-				results = calculateStats(results);
+				results = calculateStats(results, filesArray.length);
 			}
 			resolve(results);
 		} catch (error) {
@@ -25,3 +25,12 @@ module.exports = mdLinks = ( filePath, options = { validate: false, stats: false
 	});
 	return promise;
 };
+
+let test3 = 'other/test.md'; // Archivo valido
+let test4 = 'other/'; //Directorio con multiples archivos validos
+
+mdLinks(test4, {stats: true, recursive: true}).then(respuesta =>{
+	console.log(respuesta);
+}).catch(error => {
+	console.log(error);
+});

@@ -17,8 +17,8 @@ const multipleFileArray =	[
 ];
 const noURLFile = [ './other/test3.md' ];
 
-const statsResultsWithBroken = { Total: 13, Unique: 13, Broken: 7 };
-const statsResults = { Total: 61, Unique: 41 };
+const statsResultsWithBroken = { Files: 1, Total: 13, Unique: 13, Broken: 7 };
+const statsResults = { Files: 4, Total: 61, Unique: 41 };
 
  describe('validateFile', () => {
 	it('debería ser una función', () => {
@@ -40,7 +40,7 @@ const statsResults = { Total: 61, Unique: 41 };
 		expect(validateFile('./other/test.md')).toEqual(expect.arrayContaining(singleFileArray));
 	});
 	it('Retornar array con paths de archivos para directorio valido', () => {
-		expect(validateFile('./other')).toEqual(expect.arrayContaining(multipleFileArray));
+		expect(validateFile('./other', true)).toEqual(expect.arrayContaining(multipleFileArray));
 	});
  });
 
@@ -49,7 +49,7 @@ const statsResults = { Total: 61, Unique: 41 };
 		expect(typeof fileExtractor).toBe('function');
 	});
 	it('Retornar array con paths de archivos para directorio valido', () => {
-		expect(fileExtractor('./other')).toEqual(expect.arrayContaining(multipleFileArray));
+		expect(fileExtractor('./other', true)).toEqual(expect.arrayContaining(multipleFileArray));
 	});
  });
 
@@ -83,9 +83,9 @@ const statsResults = { Total: 61, Unique: 41 };
 		expect(typeof calculateStats).toBe('function');
 	});
 	it('Retornar objeto con propiedades { Total: 13, Unique: 13, Broken: 7 } para data con url validadas', () => {
-		expect(calculateStats(afterValidateData).stats).toEqual(expect.objectContaining(statsResultsWithBroken));
+		expect(calculateStats(afterValidateData, singleFileArray.length).stats).toEqual(expect.objectContaining(statsResultsWithBroken));
 	});
 	it('Retornar objeto con propiedades { Total: 61, Unique: 41 } para data con url no validadas', () => {
-		expect(calculateStats(dataMultipleFiles).stats).toEqual(expect.objectContaining(statsResults));
+		expect(calculateStats(dataMultipleFiles, multipleFileArray.length).stats).toEqual(expect.objectContaining(statsResults));
 	});
  });

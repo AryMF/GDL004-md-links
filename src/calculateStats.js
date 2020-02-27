@@ -1,4 +1,4 @@
-module.exports = calculateStats = (results) => {
+module.exports = calculateStats = (results, filesNumber) => {
 	//Numero de links
 	let totalLinks = results.data.length;
 
@@ -20,6 +20,7 @@ module.exports = calculateStats = (results) => {
 
 	//Concat stats a results
 	results['stats'] = {
+		'Files': filesNumber,
 		'Total': totalLinks,
 		'Unique': uniqueLinks.length
 	}
