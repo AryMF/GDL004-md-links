@@ -1,25 +1,24 @@
-const fetch = require("node-fetch");
+const fetch = require('node-fetch');
 
-module.exports = urlStatusCheck = async (results) => {
-	//Llamadas a los links
-	let linksStatus = {'data': []};
-	linksStatus['data'] = await Promise.all(
+module.exports = async (results) => {
+	// Llamadas a los links
+	const linksStatus = { data: []};
+	linksStatus.data = await Promise.all(
 		results.data.map(async (element, index) => {
 			let urlResponse = {};
 			try {
 				urlResponse = await fetch(element.href);
-			}
-			catch(error) {
+			} catch (error) {
 				urlResponse = {
-					status: error.name + ': ' + error.message,
-					ok: false
-				}
+					status: `${error.name}: ${error.message}`,
+					ok: false,
+				};
 			}
-			let status = urlResponse.ok === true ? 'Ok' : 'Fail';
-			element['status'] = status;
-			element['responseCode'] = urlResponse.status;
+			const status = urlResponse.ok === true ? 'Ok' : 'Fail';
+			element.status = status;
+			element.responseCode = urlResponse.status;
 			return element;
-		})
+		}),
 	);
 	return linksStatus;
 };

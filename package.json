@@ -8,7 +8,9 @@
     "md-links": "bin/md-links"
   },
   "scripts": {
-    "test": "jest --verbose --coverage"
+    "test": "jest --verbose --coverage",
+    "eslint": "eslint --fix --ext .js src/ test/",
+    "pretest": "npm run eslint"
   },
   "repository": {
     "type": "git",
@@ -27,8 +29,8 @@
   "homepage": "https://github.com/AryMF/GDL004-md-links#readme",
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.8.1",
     "jest": "^25.1.0"
   },
   "dependencies": {

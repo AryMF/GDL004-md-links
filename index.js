@@ -3,10 +3,10 @@ const parseURL = require('./src/parseURL.js');
 const urlStatusCheck = require('./src/urlStatusCheck.js');
 const calculateStats = require('./src/calculateStats.js');
 
-module.exports = mdLinks = ( filePath, options = { validate: false, stats: false, recursive: false } ) => {
-	const promise = new Promise( async (resolve, reject) => {
+module.exports.mdLinks = (filePath, options = { validate: false, stats: false, recursive: false }) => {
+	const promise = new Promise(async(resolve, reject) => {
 		try {
-			//Validar si se recibio un directorio o un archivo
+    	// Validar si se recibio un directorio o un archivo
 			let filesArray = validateFile(filePath, options.recursive);
 			//Conseguir array de links -> options === vacio
 			let results = parseURL(filesArray);

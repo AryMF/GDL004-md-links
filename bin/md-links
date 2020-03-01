@@ -1,4 +1,39 @@
 #!/usr/bin/env node
 
 require = require('esm')(module /*, options*/);
-require('../cli.js').mdLinks(process.argv);
+var yargs = require('yargs');
+
+const argv = yargs
+	.usage('\nClean library that reads markdown text files and validates the state of the contained links [alive/dead].\n\nUsage: md-Links [options]')
+	.help('help').alias('help', 'h')
+	.version().alias('version', 'V')
+	.options({
+		path:	{
+			alias: 'p',
+			description: "<filename> Input file name.",
+			requiresArg: true,
+			required: true
+		},
+		validate:	{
+			alias: 'v',
+			description: 'Verify the status of each link on the file.',
+			requiresArg: false,
+			required: false
+		},
+		stats:	{
+			alias: 's',
+			description: 'Prints the number of links found and the number of unique links.',
+			requiresArg: false,
+			required: false
+		},
+		recursive:	{
+			alias: 'r',
+			description: 'Search in all the sub directories of the given path',
+			requiresArg: false,
+			required: false
+		},
+	})
+	.example('md-Links --path= <file/directory> --validate --stats')
+	.argv;
+
+require('../cli.js').mdLinks(argv);

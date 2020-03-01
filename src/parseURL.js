@@ -1,27 +1,27 @@
 const fs = require('fs');
 
-module.exports = parseURL = (filesArray) => {
-	let results = {'data': []};
+module.exports = (filesArray) => {
+	const results = { data: []};
 	let controlCounter = 0;
 	const regexMdLinks = /\[(.*)\](\(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)\))/gm;
 	const singleMatch = /\[(.*)\]\((https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*))\)/;
-	//Iterar entre los elemetos del filesArray y sacar todos los matches
-	for(let elementFile of filesArray){
+	// Iterar entre los elemetos del filesArray y sacar todos los matches
+	for (const elementFile of filesArray) {
 		// ***** Leer el archivo *****
 		const contents = fs.readFileSync(elementFile, 'utf8');
-		//Conseguir array de links
-		let matches = contents.match(regexMdLinks);
-		//Validar que existan links para trabajar.
-		if(!matches) {
+		// Conseguir array de links
+		const matches = contents.match(regexMdLinks);
+		// Validar que existan links para trabajar.
+		if (!matches) {
 			controlCounter++;
 		} else {
-			//Formato de informacion
-			fileInfo = matches.map(element => {
-				let linkInfo = singleMatch.exec(element);
-				let info = {
+			// Formato de informacion
+			fileInfo = matches.map((element) => {
+				const linkInfo = singleMatch.exec(element);
+				const info = {
 					href: linkInfo[2],
 					text: linkInfo[1].substring(0, 50),
-					file: elementFile
+					file: elementFile,
 				};
 				return info;
 			});
@@ -30,7 +30,7 @@ module.exports = parseURL = (filesArray) => {
 		}
 	}
 
-	if(controlCounter === filesArray.length) {
+	if (controlCounter === filesArray.length) {
 		throw 'No links to verify in the file.';
 	} else {
 		return results;
