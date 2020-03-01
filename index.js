@@ -25,12 +25,3 @@ module.exports = mdLinks = ( filePath, options = { validate: false, stats: false
 	});
 	return promise;
 };
-
-let test3 = 'other/test.md'; // Archivo valido
-let test4 = 'other/'; //Directorio con multiples archivos validos
-
-mdLinks(test4, {stats: true, recursive: true}).then(respuesta =>{
-	console.log(respuesta);
-}).catch(error => {
-	console.log(error);
-});
