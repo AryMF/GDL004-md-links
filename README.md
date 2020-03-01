@@ -15,7 +15,7 @@ To add the module to your project:
 ---
 ## API
 
-After recibing a valid path, mdLinks extracts all the urls of the valid files (markdown) and checks their status.
+After receiving a valid path, mdLinks extracts all the urls of the valid files (markdown) and checks their status.
 
 ### mdLinks(\<path>, [options])
 
@@ -24,15 +24,15 @@ Parameters:
 * `options`: Object of optional options, containing any of the following optional fields
 	* `validate`: (boolean) Verify the status of each link on the file
 	* `stats`: (boolean) Prints the number of links found and the number of unique links
+	* `recursive`: (boolean) Read all the sub directories contained in the path.
 
 Response:
-* `resolve`: Results in a objects with the following properties:
+* Object with the following properties:
 	* `href`: Retrieved url
 	* `text`: Text that accompanies the link
 	* `file`: File/directory path
 	* `status`: (Ok/Fail) Status of the url
 	* `responseCode`: Responding code
-* `reject`: Error code throw when the operation fails
 
 ### Module examples
 
@@ -81,4 +81,4 @@ mdLinks('directory/file.md', {validate: true, stats: true}).then(response =>{
 	--recursive, -r  Search in all the sub directories of the given path
 
 	Examples:
-	md-Links --path= <file/directory> --validate --stats --recursive
+	md-Links --path ./ --validate --stats --recursive

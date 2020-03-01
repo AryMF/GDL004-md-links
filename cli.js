@@ -2,46 +2,12 @@ const validateFile = require('./src\\validateFile.js');
 const parseURL = require('.\\src\\parseURL.js');
 const urlStatusCheck = require('.\\src\\urlStatusCheck.js');
 const calculateStats = require('.\\src\\calculateStats.js');
-var yargs = require('yargs');
 const chalk = require('chalk');
 var Spinner = require('cli-spinner').Spinner;
 const boxen = require('boxen');
 
-const argv = yargs
-  .usage('\nClean library that reads markdown text files and validates the state of the contained links [alive/dead].\n\nUsage: md-Links [options]')
-  .help('help').alias('help', 'h')
-  .version().alias('version', 'V')
-  .options({
-	path:	{
-		alias: 'p',
-		description: "<filename> Input file name.",
-		requiresArg: true,
-		required: true
-	},
-	validate:	{
-		alias: 'v',
-		description: 'Verify the status of each link on the file.',
-		requiresArg: false,
-		required: false
-	},
-    stats:	{
-		alias: 's',
-		description: 'Prints the number of links found and the number of unique links.',
-		requiresArg: false,
-		required: false
-	},
-	recursive:	{
-		alias: 'r',
-		description: 'Search in all the sub directories of the given path',
-		requiresArg: false,
-		required: false
-	},
-  })
-  .example('md-Links --path= <file/directory> --validate --stats')
-  .argv;
-
 //export async function mdLinks(args){
-module.exports = mdLinks = async (args) => {
+const mdLinks = async (args) => {
 	try {
 		const spinner = new Spinner('Processing.. %s	');
 		spinner.setSpinnerString('|/-\\');
@@ -67,18 +33,18 @@ module.exports = mdLinks = async (args) => {
 
 		//Imprimir resultados
 		results.data.forEach(item => {
-				let egg = '';
-				item.responseCode === 418 ? egg = ' ᴺᵒ ᶜᵒᶠᶠᵉᵉ ⁴ ᵁ' : egg;
-				let template = `${chalk.yellow('Path')}: ${item.file}  ${chalk.blue('Text')}: ${chalk.bold(item.text)}  ${chalk.magenta('Url')}: ${item.href}`;
-				if(item.status){
-					item.status === 'Ok' ? template += `  ${chalk.yellow('Status')}: ${chalk.green.bold(item.status)}`
+			let egg = '';
+			item.responseCode === 418 ? egg = ' ᴺᵒ ᶜᵒᶠᶠᵉᵉ ⁴ ᵁ' : egg;
+			let template = `${chalk.yellow('Path')}: ${item.file}  ${chalk.blue('Text')}: ${chalk.bold(item.text)}  ${chalk.magenta('Url')}: ${item.href}`;
+			if(item.status){
+				item.status === 'Ok' ? template += `  ${chalk.yellow('Status')}: ${chalk.green.bold(item.status)}`
 					: template += `  ${chalk.yellow('Status')}: ${chalk.red.bold(item.status)}`;
 
-					template += `  ResponseCode: ${chalk.cyanBright.bold(item.responseCode)}${chalk.greenBright(egg)}\n`
-				} else {
-					template += `\n`;
-				}
-				console.log(template);
+				template += `  ResponseCode: ${chalk.cyanBright.bold(item.responseCode)}${chalk.greenBright(egg)}\n`
+			} else {
+				template += `\n`;
+			}
+			console.log(template);
 		});
 
 		//options === -s, --stats
@@ -103,6 +69,6 @@ module.exports = mdLinks = async (args) => {
 	} catch (error) {
 		console.log( `${error}`);
 	}
-}
+};
 
-mdLinks(argv);
+module.exports = { mdLinks };

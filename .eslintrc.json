@@ -6,9 +6,6 @@
 		"node": true,
 		"jest": true
     },
-    "extends": [
-        "airbnb-base"
-    ],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
@@ -17,9 +14,12 @@
         "ecmaVersion": 2018
     },
     "rules": {
+		"indent": ["error", "tab"],
 		"semi": [ "error", "always" ], //Semicolons instead of ASI
 		"object-curly-spacing": [ "error", "always", { "arraysInObjects": false, "objectsInObjects": false }],
 		"array-bracket-spacing": [ "error", "always", { "objectsInArrays": false, "arraysInArrays": false }],
-		"eqeqeq": [ "error", "always" ] //Require === and !==
-    }
+		"eqeqeq": [ "error", "always" ], //Require === and !==
+		"linebreak-style": ["error", "windows"]
+	},
+	"plugins": ["jest"]
 }
